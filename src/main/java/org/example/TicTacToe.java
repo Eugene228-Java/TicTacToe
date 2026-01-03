@@ -1,4 +1,4 @@
-package org.example;/*package org.example;
+/*package org.example;
 
 import java.util.Scanner;
 import java.util.Random;
@@ -139,7 +139,9 @@ public class Main {
     }
 }*/
 
-import java.util.Scanner;
+
+
+/*import java.util.Scanner;
 import java.util.Random;
 
 public class TicTacToe {
@@ -458,5 +460,188 @@ public class TicTacToe {
         }
 
         return false;
+    }
+}*/
+
+
+
+package org.example;
+
+import javax.swing.*;
+import java.awt.*;
+import java.util.Random;
+
+public class TicTacToe extends JFrame {
+
+    private final JButton[][] buttons = new JButton[3][3];
+    private final char[][] board = new char[3][3];
+    private char currentPlayer = 'X';
+    private boolean vsComputer = false;
+
+    public TicTacToe() {
+        setTitle("Крестики-нолики");
+        setSize(400, 450);
+        setDefaultCloseOperation(EXIT_ON_CLOSE);
+        setLocationRelativeTo(null);
+        setLayout(new BorderLayout());
+
+        createMenu();
+        createBoard();
+        resetBoard();
+
+        setVisible(true);
+    }
+
+    // ===== МЕНЮ =====
+    private void createMenu() {
+        JMenuBar menuBar = new JMenuBar();
+        JMenu gameMenu = new JMenu("Игра");
+
+        JMenuItem friend = new JMenuItem("Против друга");
+        JMenuItem computer = new JMenuItem("Против компьютера");
+        JMenuItem rules = new JMenuItem("Правила");
+        JMenuItem exit = new JMenuItem("Выход");
+
+        friend.addActionListener(e -> {
+            vsComputer = false;
+            resetBoard();
+        });
+
+        computer.addActionListener(e -> {
+            vsComputer = true;
+            resetBoard();
+        });
+
+        rules.addActionListener(e ->
+                JOptionPane.showMessageDialog(
+                        this,
+                        "Крестики-нолики\n\n" +
+                                "X ходит первым\n" +
+                                "3 в ряд — победа\n" +
+                                "Можно играть с другом или компьютером",
+                        "Правила",
+                        JOptionPane.INFORMATION_MESSAGE
+                )
+        );
+
+        exit.addActionListener(e -> System.exit(0));
+
+        gameMenu.add(friend);
+        gameMenu.add(computer);
+        gameMenu.addSeparator();
+        gameMenu.add(rules);
+        gameMenu.add(exit);
+
+        menuBar.add(gameMenu);
+        setJMenuBar(menuBar);
+    }
+
+    // ===== ПОЛЕ =====
+    private void createBoard() {
+        JPanel panel = new JPanel(new GridLayout(3, 3));
+        Font font = new Font("Arial", Font.BOLD, 60);
+
+        for (int i = 0; i < 3; i++) {
+            for (int j = 0; j < 3; j++) {
+                JButton button = new JButton("");
+                button.setFont(font);
+
+                int r = i;
+                int c = j;
+
+                button.addActionListener(e -> handleMove(r, c));
+
+                buttons[i][j] = button;
+                panel.add(button);
+            }
+        }
+
+        add(panel, BorderLayout.CENTER);
+    }
+
+    // ===== ЛОГИКА ИГРЫ =====
+    private void handleMove(int r, int c) {
+        if (board[r][c] != ' ') return;
+
+        makeMove(r, c, currentPlayer);
+
+        if (checkWin(currentPlayer)) {
+            endGame("Игрок " + currentPlayer + " победил!");
+            return;
+        }
+
+        if (isDraw()) {
+            endGame("Ничья!");
+            return;
+        }
+
+        currentPlayer = (currentPlayer == 'X') ? 'O' : 'X';
+
+        if (vsComputer && currentPlayer == 'O') {
+            computerMove();
+        }
+    }
+
+    private void computerMove() {
+        Random random = new Random();
+
+        while (true) {
+            int r = random.nextInt(3);
+            int c = random.nextInt(3);
+
+            if (board[r][c] == ' ') {
+                makeMove(r, c, 'O');
+                break;
+            }
+        }
+
+        if (checkWin('O')) {
+            endGame("Компьютер победил!");
+        } else if (isDraw()) {
+            endGame("Ничья!");
+        } else {
+            currentPlayer = 'X';
+        }
+    }
+
+    private void makeMove(int r, int c, char p) {
+        board[r][c] = p;
+        buttons[r][c].setText(String.valueOf(p));
+        buttons[r][c].setForeground(p == 'X' ? Color.RED : Color.BLUE);
+    }
+
+    private boolean checkWin(char p) {
+        for (int i = 0; i < 3; i++) {
+            if (board[i][0] == p && board[i][1] == p && board[i][2] == p) return true;
+            if (board[0][i] == p && board[1][i] == p && board[2][i] == p) return true;
+        }
+        return (board[0][0] == p && board[1][1] == p && board[2][2] == p)
+                || (board[0][2] == p && board[1][1] == p && board[2][0] == p);
+    }
+
+    private boolean isDraw() {
+        for (char[] row : board)
+            for (char c : row)
+                if (c == ' ') return false;
+        return true;
+    }
+
+    private void resetBoard() {
+        currentPlayer = 'X';
+        for (int i = 0; i < 3; i++)
+            for (int j = 0; j < 3; j++) {
+                board[i][j] = ' ';
+                buttons[i][j].setText("");
+            }
+    }
+
+    private void endGame(String message) {
+        JOptionPane.showMessageDialog(this, message);
+        resetBoard();
+    }
+
+    // ===== СТАРТ =====
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(TicTacToe::new);
     }
 }

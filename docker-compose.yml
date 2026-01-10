@@ -1,0 +1,9 @@
+services:
+  tictactoe:
+    build: .
+    container_name: tictactoe
+    ports:
+      - "5900:5900"
+    environment:
+      VNC_PASS: "1234"
+    restart: unless-stopped

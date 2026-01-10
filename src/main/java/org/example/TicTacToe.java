@@ -1,4 +1,4 @@
-/*package org.example;
+package org.example;/*package org.example;
 
 import java.util.Scanner;
 import java.util.Random;
@@ -464,8 +464,6 @@ public class TicTacToe {
 }*/
 
 
-
-package org.example;
 
 import javax.swing.*;
 import java.awt.*;
